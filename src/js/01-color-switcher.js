@@ -7,6 +7,7 @@ const refs = {
 refs.startBtn.addEventListener('click', chgColor);
 refs.stopBtn.addEventListener('click', stopChgColor);
 
+let intervalChgColor = null;
 function chgColor() {
     intervalChgColor = setInterval(() => {
     refs.bodyColor.style.backgroundColor = `${getRandomHexColor()}`;
@@ -15,7 +16,6 @@ function chgColor() {
 }
 
 function stopChgColor() {
-    console.log('click');
     clearInterval(intervalChgColor);
     refs.startBtn.removeAttribute('disabled', 'true');
 }
