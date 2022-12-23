@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
-import "flatpickr/dist/flatpickr.min.css";;
+import "flatpickr/dist/flatpickr.min.css";
+
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
@@ -11,23 +12,28 @@ const refs = {
     seconds: document.querySelector('span[data-seconds]'),
 }
 
-refs.startBtn.addEventListener('click', () => timer.startTimer());
+refs.startBtn.addEventListener('click', () => startTimer());
 refs.startBtn.classList.add('start-btn');
 refs.startBtn.setAttribute('disabled', true);
 
-let selectedTime = null;
+// let selectedTime = null;
+const CURRENT_DATE = new Date();
+let SELECTED_DATE = new Date();
+let delta;
+
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-      if (selectedDates[0] < Date.now()) {
-      Notify.failure('Please choose a date in the future');
-      selectedDates[0] = new Date();
-    } else {
-      refs.startBtn.disabled = false;
-      selectedTime = selectedDates[0];
+        if (selectedDates[0] < CURRENT_DATE) {
+            Notiflix.Notify.failure('Please choose a date in the future');
+            // window.alert('Please choose a date in the future');
+        } else {
+            refs.startBtn.disabled = false;
+            SELECTED_DATE = selectedDates[0];
+          //  console.log(refs.dateTimeInput.value);
     }
   },
 };
@@ -56,39 +62,32 @@ function convertMs(ms) {
   return { days, hours, minutes, seconds };
 }
 
-class Timer {
-  constructor() {
-    this.timerID = null;
-    this.isActive = false;
-  }
-
-  startTimer() {
-    if (this.isActive) {
-      return;
-    }
-
-    this.isActive = true;
-    this.timerID = setInterval(() => {
-      const currentTime = Date.now();
-      const deltaTime = selectedTime - currentTime;
-      const componentsTimer = convertMs(deltaTime);
-      this.updateComponentsTimer(componentsTimer);
-      if (deltaTime <= 0) {
-        this.stopTimer();
-      }
-    }, 1000);
-  }
-
-  updateComponentsTimer({ days, hours, minutes, seconds }) {
-    refs.days.textContent = days;
-    refs.hours.textContent = hours;
-    refs.minutes.textContent = minutes;
-    refs.seconds.textContent = seconds;
-  }
-
-  stopTimer() {
-    clearInterval(this.timerID);
-  }
+function startTimer() {
+    refs.startBtn.disabled = true;
+    // refs.dateTimeInput.disabled = true;
+    getDeltaTime();
 }
 
-const timer = new Timer();
+function getDeltaTime() {
+    timerId = setInterval(() => {
+        delta = SELECTED_DATE - Date.now();
+        const dateOffset = convertMs(delta);
+        
+        if (delta <= 0) {
+             clearInterval(timerId);
+        } else {
+            clockView(dateOffset);
+        }
+        }, 1000);
+}
+
+function clockView(dateOffset) {
+    refs.days.textContent = dateOffset.days;
+    refs.hours.textContent = dateOffset.hours;
+    refs.minutes.textContent = dateOffset.minutes;
+    refs.seconds.textContent = dateOffset.seconds;
+}
+
+function addLeadingZero(value) {
+    return String(value).padStart(2, "0");
+}
