@@ -69,7 +69,7 @@ function startTimer() {
 }
 
 function getDeltaTime() {
-    timerId = setInterval(() => {
+    const timerId = setInterval(() => {
         delta = SELECTED_DATE - Date.now();
         const dateOffset = convertMs(delta);
         
