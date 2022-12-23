@@ -1,62 +1,70 @@
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.min.css";
-
-import Notiflix from 'notiflix';
+import flatpickr from 'flatpickr';
+import "flatpickr/dist/flatpickr.min.css";;
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const refs = {
-    dateTimeInput: document.querySelector("#datetime-picker"),
-    btnStart: document.querySelector("[data-start]"),
-    daysValue: document.querySelector("span[data-days]"),
-    hoursValue: document.querySelector("span[data-hours]"),
-    minutesValue: document.querySelector("span[data-minutes]"),
-    secondsValue: document.querySelector("span[data-seconds]"),
+    dateInput: document.querySelector('#datetime-picker'),
+    startBtn: document.querySelector('button[data-start]'),
+    days: document.querySelector('span[data-days]'),
+    hours: document.querySelector('span[data-hours]'),
+    minutes: document.querySelector('span[data-minutes]'),
+    seconds: document.querySelector('span[data-seconds]'),
 }
 
+refs.startBtn.addEventListener('click', () => startTimer());
+refs.startBtn.classList.add('start-btn');
+refs.startBtn.setAttribute('disabled', true);
+
+let selectedTime = null;
 const CURRENT_DATE = new Date();
 let SELECTED_DATE = new Date();
 let delta;
-
-refs.btnStart.disabled = true;
 
 const options = {
   enableTime: true,
   time_24hr: true,
   defaultDate: new Date(),
   minuteIncrement: 1,
-    onClose(selectedDates) {
-        if (selectedDates[0] < CURRENT_DATE) {
-            Notiflix.Notify.failure('Please choose a date in the future');
-            // window.alert('Please choose a date in the future');
-        } else {
-            refs.btnStart.disabled = false;
-            SELECTED_DATE = selectedDates[0];
-           console.log(refs.dateTimeInput.value); 
-      }
+  onClose(selectedDates) {
+      if (selectedDates[0] < CURRENT_DATE) {
+      Notify.failure('Please choose a date in the future');
+      selectedDates[0] = new Date();
+    } else {
+      refs.startBtn.disabled = false;
+      SELECTED_DATE = selectedDates[0];
+    }
   },
 };
 
-flatpickr(refs.dateTimeInput, options);
-require("flatpickr/dist/themes/material_blue.css");
+flatpickr("#datetime-picker", options);
 
-refs.btnStart.addEventListener('click', startTimer);
-
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
+}
 function convertMs(ms) {
+  // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
 
-  const days = Math.floor(ms / day) < 10 ? addLeadingZero(Math.floor(ms / day)) : Math.floor(ms / day);
+  // Remaining days
+  const days = addLeadingZero(Math.floor(ms / day));
+  // Remaining hours
   const hours = addLeadingZero(Math.floor((ms % day) / hour));
+  // Remaining minutes
   const minutes = addLeadingZero(Math.floor(((ms % day) % hour) / minute));
-  const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second)) ;
+  // Remaining seconds
+  const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
 }
 
+
+
 function startTimer() {
-    refs.btnStart.disabled = true;
-    refs.dateTimeInput.disabled = true;
+    refs.startBtn.disabled = true;
+    refs.dateInput.disabled = true;
     getDeltaTime();
 }
 
@@ -74,12 +82,8 @@ function getDeltaTime() {
 }
 
 function clockView(dateOffset) {
-    refs.daysValue.textContent = dateOffset.days;
-    refs.hoursValue.textContent = dateOffset.hours;
-    refs.minutesValue.textContent = dateOffset.minutes;
-    refs.secondsValue.textContent = dateOffset.seconds;
-}
-
-function addLeadingZero(value) {
-    return String(value).padStart(2, "0");
+    refs.days.textContent = dateOffset.days;
+    refs.hours.textContent = dateOffset.hours;
+    refs.minutes.textContent = dateOffset.minutes;
+    refs.seconds.textContent = dateOffset.seconds;
 }
