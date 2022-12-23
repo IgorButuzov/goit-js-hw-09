@@ -15,7 +15,7 @@ refs.startBtn.addEventListener('click', () => startTimer());
 refs.startBtn.classList.add('start-btn');
 refs.startBtn.setAttribute('disabled', true);
 
-let selectedTime = null;
+let timerId = null;
 const CURRENT_DATE = new Date();
 let SELECTED_DATE = new Date();
 let delta;
@@ -69,7 +69,7 @@ function startTimer() {
 }
 
 function getDeltaTime() {
-    const timerId = setInterval(() => {
+    timerId = setInterval(() => {
         delta = SELECTED_DATE - Date.now();
         const dateOffset = convertMs(delta);
         
