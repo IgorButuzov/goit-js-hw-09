@@ -16,7 +16,6 @@ refs.startBtn.addEventListener('click', () => startTimer());
 refs.startBtn.classList.add('start-btn');
 refs.startBtn.setAttribute('disabled', true);
 
-// let selectedTime = null;
 const CURRENT_DATE = new Date();
 let SELECTED_DATE = new Date();
 let delta;
@@ -29,11 +28,10 @@ const options = {
   onClose(selectedDates) {
         if (selectedDates[0] < CURRENT_DATE) {
             Notiflix.Notify.failure('Please choose a date in the future');
-            // window.alert('Please choose a date in the future');
+            
         } else {
             refs.startBtn.disabled = false;
             SELECTED_DATE = selectedDates[0];
-          //  console.log(refs.dateTimeInput.value);
     }
   },
 };
@@ -64,7 +62,6 @@ function convertMs(ms) {
 
 function startTimer() {
     refs.startBtn.disabled = true;
-    // refs.dateTimeInput.disabled = true;
     getDeltaTime();
 }
 
